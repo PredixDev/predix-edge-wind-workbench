@@ -1,0 +1,17 @@
+{
+	"info": {
+		"file_version": 1.0
+	},
+	"config": {
+		"plane1": {
+			"transport_addr": "redis://edgeservices_cdp_redis"
+		},
+		"plane2": {
+			"transport_addr": "mqtt-tcp://predix-edge-broker"
+		}
+	},
+	"mapping": [
+		["plane1", 12, ".*", ""],
+		["plane2", 3, ".*", ""]
+	]
+}
