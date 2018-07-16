@@ -128,9 +128,18 @@ touch "$logDir/quickstart.log"
 
 cd $REPO_NAME
 
+if [[ $(docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest) ]]; then
+  echo "pull successfully"
+else
+  read -p "Enter your DTR user name> " DTR_USERNAME
+  read -p "Enter your DTR password> " -s DTR_PASSWORD
+  docker login dtr.predix.io -u $DTR_USERNAME -p $DTR_PASSWORD
+  docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest
+fi
 
-
-docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest
+if [[ ! $(docker swarm init) ]]; then
+  echo "Already in swarm node. Ignore the above error message"
+fi
 
 docker pull predixadoption/edge-hello-world:latest
 
@@ -156,14 +165,17 @@ docker service logs $(docker service ls -f "name=my-edge-app_edge-hello-world" -
 
 # Automagically open the application in browser, based on OS
 if [[ $SKIP_BROWSER == 0 ]]; then
-  app_url="http://localhost:9098"
+  app_url="http://127.0.0.1:9098"
 
   case "$(uname -s)" in
      Darwin)
        # OSX
        open $app_url
        ;;
-
+     Linux)
+       # OSX
+       xdg-open $app_url
+       ;;
      CYGWIN*|MINGW32*|MINGW64*|MSYS*)
        # Windows
        start "" $app_url

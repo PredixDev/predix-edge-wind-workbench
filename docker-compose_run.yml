@@ -6,11 +6,13 @@ version: '3'
 services:
   predix-edge-broker:
     image: "dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest"
+    hostname: 127.0.0.1
     ports:
       - 1883:1883
       - 9001:9001 # Websocket port
   edge-hello-world:
     image: "predixadoption/edge-hello-world:latest"
+    hostname: 127.0.0.1
     depends_on:
       - predix-edge-broker
     environment:
