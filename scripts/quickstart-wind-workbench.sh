@@ -49,8 +49,8 @@ SKIP_SETUP=false
 SCRIPT="-script build-basic-app.sh -script-readargs edge-starter-readargs.sh"
 QUICKSTART_ARGS=" $SCRIPT"
 VERSION_JSON="version.json"
-PREDIX_SCRIPTS=predix-scripts
-REPO_NAME=wind-workbench
+PREDIX_SCRIPTS="predix-scripts"
+REPO_NAME="wind-workbench"
 VERSION_JSON="version.json"
 APP_DIR="edge-hello-world"
 APP_NAME="Edge Starter Hello World"
@@ -113,7 +113,10 @@ getPredixScripts
 #clone the repo itself if running from oneclick script
 pwd
 ls -lrt
-getCurrentRepo
+if [[ ! -d "$PREDIX_SCRIPTS/$REPO_NAME" ]]; then
+  echo "repo not present"
+  getCurrentRepo
+fi
 echo "pwd after copy -> $(pwd)"
 ls -lrt
 echo "quickstart_args=$QUICKSTART_ARGS"
