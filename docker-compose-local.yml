@@ -4,20 +4,20 @@
 version: '3'
 
 services:
-  predix-edge-broker:
-    image: "dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest"
-    hostname: 127.0.0.1
-    ports:
-      - 1883:1883
   edge-hello-world:
-    image: "edge-hello-world:latest"
+    image: "predixadoption/edge-hello-world:latest"
     environment:
       - UPDATE_RATE_SEC=1.0
       - TURBINE_IN_CHANNEL=turbine_control
       - TURBINE_OUT_CHANNEL=turbine_measurement
       - WEATHER_OUT_CHANNEL=weather
       - CDP_CONFIG=/opt/app_config/cdp_config.json
+    networks:
+      - predix-edge-broker_net
     ports:
       - "9098:9005"
     volumes:
       - ./config:/opt/app_config
+networks:
+  predix-edge-broker_net:
+    external: true

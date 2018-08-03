@@ -52,21 +52,26 @@ fi
 
 #docker pull predixadoption/edge-hello-world:latest
 pwd
+HELLO_WORLD_APP="hello-world-app.tar.gz"
+
 if [[ "$RECREATE_TAR" == "1" || ! -e "images.tar" ]]; then
   echo "Creating a images.tar with required images"
+  rm -rf images.tar
   docker save -o images.tar predixadoption/edge-hello-world:latest
 fi
-if [[ "$RECREATE_TAR" == "1" || ! -e "app.tar.gz" ]]; then
-  rm -rf app.tar.gz
-  echo "Creating app.tar.gz with docker-compose.yml"
-  tar -czvf app.tar.gz images.tar docker-compose.yml
+if [[ "$RECREATE_TAR" == "1" || ! -e "$HELLO_WORLD_APP" ]]; then
+  rm -rf $HELLO_WORLD_APP
+  echo "Creating $HELLO_WORLD_APP with docker-compose.yml"
+  tar -czvf $HELLO_WORLD_APP images.tar docker-compose.yml
 fi
 
-if [[ "$RECREATE_TAR" == "1" || ! -e "config.zip" ]]; then
-  rm -rf config.zip
+HELLO_WORLD_CONFIG="hello-world-config.zip"
+
+if [[ "$RECREATE_TAR" == "1" || ! -e "$HELLO_WORLD_CONFIG" ]]; then
+  rm -rf $HELLO_WORLD_CONFIG
   echo "Compressing the configurations."
   cd config
-  zip -X -r ../config.zip *.json
+  zip -X -r ../$HELLO_WORLD_CONFIG *.json
   cd ../
 fi
 
@@ -76,7 +81,7 @@ read -p "Enter your user password> " -s LOGIN_PASSWORD
 
 pwd
 expect -c "
-  spawn scp -o \"StrictHostKeyChecking=no\" app.tar.gz config.zip scripts/quickstart-run-wind-workbench.sh $LOGIN_USER@$IP_ADDRESS:/mnt/data/downloads
+  spawn scp -o \"StrictHostKeyChecking=no\" $HELLO_WORLD_APP $HELLO_WORLD_CONFIG scripts/quickstart-run-wind-workbench.sh docker-compose_services.yml $LOGIN_USER@$IP_ADDRESS:/mnt/data/downloads
   set timeout 50
   expect {
     \"Are you sure you want to continue connecting\" {
@@ -89,7 +94,7 @@ expect -c "
     }
   }
   expect \"*\# \"
-  spawn ssh -o \"StrictHostKeyChecking=no\" root@$IP_ADDRESS
+  spawn ssh -o \"StrictHostKeyChecking=no\" $LOGIN_USER@$IP_ADDRESS
   set timeout 5
   expect {
     \"Are you sure you want to continue connecting\" {
@@ -103,11 +108,13 @@ expect -c "
   }
   expect \"*\# \"
   send \"su eauser /mnt/data/downloads/quickstart-run-wind-workbench.sh\r\"
-  set timeout 50
+  set timeout 20
   expect \"*\# \"
   send \"exit\r\"
+  expect eof
 "
 
+sleep 10
 # Automagically open the application in browser, based on OS
 if [[ $SKIP_BROWSER == 0 ]]; then
   app_url="http://$IP_ADDRESS:9098"

@@ -113,10 +113,10 @@ getPredixScripts
 #clone the repo itself if running from oneclick script
 pwd
 ls -lrt
-if [[ ! -d "$PREDIX_SCRIPTS/$REPO_NAME" ]]; then
-  echo "repo not present"
-  getCurrentRepo
-fi
+#if [[ ! -d "$PREDIX_SCRIPTS/$REPO_NAME" ]]; then
+#  echo "repo not present"
+getCurrentRepo
+#fi
 echo "pwd after copy -> $(pwd)"
 ls -lrt
 echo "quickstart_args=$QUICKSTART_ARGS"
@@ -152,15 +152,20 @@ if [[ $(docker service ls -f "name=my-edge-app_edge-hello-world" -q | wc -l) > 0
   docker service rm $(docker service ls -f "name=my-edge-app_edge-hello-world" -q)
 fi
 
-docker stack deploy --compose-file docker-compose_services.yml my-edge-app
+docker service ls -f "name=predix-edge-broker*" -q | wc -l
 
-sleep 10
+if [[ $(docker service ls -f "name=predix-edge-broker*" -q | wc -l) < 1 ]]; then
+  echo "Predix Edge Broker not running"
+  docker stack deploy --compose-file docker-compose-services.yml predix-edge-broker
+else
+  echo "Predix Edge Broker already runnning"
+fi
 
 docker service ls
 
-docker stack deploy --compose-file docker-compose_run.yml my-edge-app
+docker stack deploy --compose-file docker-compose-local.yml my-edge-app
 
-sleep 5
+sleep 10
 
 docker service ls
 
@@ -187,6 +192,8 @@ if [[ $SKIP_BROWSER == 0 ]]; then
 fi
 ########### custom logic ends here ###########
 docker service ls
-
+echo ""
+echo ""
+docker network ls
 __append_new_line_log "Successfully completed $APP_NAME installation!" "$logDir"
 __append_new_line_log "" "$logDir"
