@@ -46,7 +46,7 @@ BRANCH="master"
 PRINT_USAGE=0
 SKIP_SETUP=false
 #ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
-SCRIPT="-script build-basic-app.sh -script-readargs edge-starter-readargs.sh"
+SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
 QUICKSTART_ARGS=" $SCRIPT"
 VERSION_JSON="version.json"
 PREDIX_SCRIPTS="predix-scripts"
@@ -120,7 +120,7 @@ getCurrentRepo
 echo "pwd after copy -> $(pwd)"
 ls -lrt
 echo "quickstart_args=$QUICKSTART_ARGS"
-source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS
+source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS -repo-name $REPO_NAME
 
 ########### custom logic starts here ###########
 if ! [ -d "$logDir" ]; then
@@ -128,21 +128,7 @@ if ! [ -d "$logDir" ]; then
   chmod 744 "$logDir"
 fi
 touch "$logDir/quickstart.log"
-
-cd $REPO_NAME
-
-if [[ $(docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest) ]]; then
-  echo "pull successfully"
-else
-  read -p "Enter your DTR user name> " DTR_USERNAME
-  read -p "Enter your DTR password> " -s DTR_PASSWORD
-  docker login dtr.predix.io -u $DTR_USERNAME -p $DTR_PASSWORD
-  docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest
-fi
-
-if [[ ! $(docker swarm init) ]]; then
-  echo "Already in swarm node. Ignore the above error message"
-fi
+pwd
 
 docker pull predixadoption/edge-hello-world:latest
 
@@ -152,15 +138,6 @@ if [[ $(docker service ls -f "name=my-edge-app_edge-hello-world" -q | wc -l) > 0
   docker service rm $(docker service ls -f "name=my-edge-app_edge-hello-world" -q)
 fi
 
-docker service ls -f "name=predix-edge-broker*" -q | wc -l
-
-if [[ $(docker service ls -f "name=predix-edge-broker*" -q | wc -l) < 1 ]]; then
-  echo "Predix Edge Broker not running"
-  docker stack deploy --compose-file docker-compose-services.yml predix-edge-broker
-else
-  echo "Predix Edge Broker already runnning"
-fi
-
 docker service ls
 
 docker stack deploy --compose-file docker-compose-local.yml my-edge-app
@@ -168,8 +145,6 @@ docker stack deploy --compose-file docker-compose-local.yml my-edge-app
 sleep 10
 
 docker service ls
-
-docker service logs $(docker service ls -f "name=my-edge-app_edge-hello-world" -q)
 
 # Automagically open the application in browser, based on OS
 if [[ $SKIP_BROWSER == 0 ]]; then
@@ -195,5 +170,6 @@ docker service ls
 echo ""
 echo ""
 docker network ls
-__append_new_line_log "Successfully completed $APP_NAME installation!" "$logDir"
-__append_new_line_log "" "$logDir"
+
+cat $SUMMARY_TEXTFILE
+echo "......................................Done......................................"

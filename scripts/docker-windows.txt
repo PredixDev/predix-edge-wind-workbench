@@ -1,4 +1,0 @@
-Hyper-V and Containers features are not enabled.
-Do you want to enable them for Docker to be able to work properly?
-Your computer will restart automatically.
-Note: VirtualBox will no longer work.

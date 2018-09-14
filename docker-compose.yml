@@ -1,4 +1,4 @@
-# This is file to manage deployment to Predix Edge OS
+# This file is used when deploying to Predix Edge OS - scp in and then run from within
 
 version: '3'
 

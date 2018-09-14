@@ -41,80 +41,87 @@ function local_read_args() {
   fi
 }
 
-if [[ $(docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest) ]]; then
-  echo "pull successfully"
+BRANCH="master"
+PRINT_USAGE=0
+SKIP_SETUP=false
+#ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
+SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh -deploy-edge-app"
+QUICKSTART_ARGS=" $SCRIPT"
+VERSION_JSON="version.json"
+PREDIX_SCRIPTS="predix-scripts"
+REPO_NAME="wind-workbench"
+VERSION_JSON="version.json"
+APP_DIR="edge-hello-world"
+APP_NAME="Edge Starter Hello World"
+TOOLS="Docker, Git"
+TOOLS_SWITCHES="--docker --git"
+
+local_read_args $@
+IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/$BRANCH/izon.sh"
+VERSION_JSON_URL=https://raw.githubusercontent.com/PredixDev/$REPO_NAME/$BRANCH/version.json
+
+
+function check_internet() {
+  set +e
+  echo ""
+  echo "Checking internet connection..."
+  curl "http://google.com" > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo "Unable to connect to internet, make sure you are connected to a network and check your proxy settings if behind a corporate proxy"
+    echo "If you are behind a corporate proxy, set the 'http_proxy' and 'https_proxy' environment variables."
+    exit 1
+  fi
+  echo "OK"
+  echo ""
+  set -e
+}
+
+function init() {
+  currentDir=$(pwd)
+  if [[ $currentDir == *"scripts" ]]; then
+    echo 'Please launch the script from the root dir of the project'
+    exit 1
+  fi
+  if [[ ! $currentDir == *"$REPO_NAME" ]]; then
+    mkdir -p $APP_DIR
+    cd $APP_DIR
+  fi
+
+  check_internet
+
+  #get the script that reads version.json
+  eval "$(curl -s -L $IZON_SH)"
+
+  getVersionFile
+  getLocalSetupFuncs
+}
+
+if [[ $PRINT_USAGE == 1 ]]; then
+  init
+  __print_out_standard_usage
 else
-  read -p "Enter your DTR user name> " DTR_USERNAME
-  read -p "Enter your DTR password> " -s DTR_PASSWORD
-  docker login dtr.predix.io -u $DTR_USERNAME -p $DTR_PASSWORD
-  docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest
+  if $SKIP_SETUP; then
+    init
+  else
+    init
+    __standard_mac_initialization
+  fi
 fi
 
-#docker pull predixadoption/edge-hello-world:latest
+getPredixScripts
+#clone the repo itself if running from oneclick script
 pwd
-HELLO_WORLD_APP="hello-world-app.tar.gz"
+ls -lrt
+#if [[ ! -d "$PREDIX_SCRIPTS/$REPO_NAME" ]]; then
+#  echo "repo not present"
+getCurrentRepo
+#fi
+echo "pwd after copy -> $(pwd)"
+ls -lrt
+echo "quickstart_args=$QUICKSTART_ARGS"
+source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS -repo-name $REPO_NAME -app-name $APP_DIR
 
-if [[ "$RECREATE_TAR" == "1" || ! -e "images.tar" ]]; then
-  echo "Creating a images.tar with required images"
-  rm -rf images.tar
-  docker save -o images.tar predixadoption/edge-hello-world:latest
-fi
-if [[ "$RECREATE_TAR" == "1" || ! -e "$HELLO_WORLD_APP" ]]; then
-  rm -rf $HELLO_WORLD_APP
-  echo "Creating $HELLO_WORLD_APP with docker-compose.yml"
-  tar -czvf $HELLO_WORLD_APP images.tar docker-compose.yml
-fi
-
-HELLO_WORLD_CONFIG="hello-world-config.zip"
-
-if [[ "$RECREATE_TAR" == "1" || ! -e "$HELLO_WORLD_CONFIG" ]]; then
-  rm -rf $HELLO_WORLD_CONFIG
-  echo "Compressing the configurations."
-  cd config
-  zip -X -r ../$HELLO_WORLD_CONFIG *.json
-  cd ../
-fi
-
-read -p "Enter the IP Address of Edge OS> " IP_ADDRESS
-read -p "Enter the username for Edge OS> " LOGIN_USER
-read -p "Enter your user password> " -s LOGIN_PASSWORD
-
-pwd
-expect -c "
-  spawn scp -o \"StrictHostKeyChecking=no\" $HELLO_WORLD_APP $HELLO_WORLD_CONFIG scripts/quickstart-run-wind-workbench.sh docker-compose_services.yml $LOGIN_USER@$IP_ADDRESS:/mnt/data/downloads
-  set timeout 50
-  expect {
-    \"Are you sure you want to continue connecting\" {
-      send \"yes\r\"
-      expect \"assword:\"
-      send "$LOGIN_PASSWORD\r"
-    }
-    \"assword:\" {
-      send \"$LOGIN_PASSWORD\r\"
-    }
-  }
-  expect \"*\# \"
-  spawn ssh -o \"StrictHostKeyChecking=no\" $LOGIN_USER@$IP_ADDRESS
-  set timeout 5
-  expect {
-    \"Are you sure you want to continue connecting\" {
-      send \"yes\r\"
-      expect \"assword:\"
-      send \"$LOGIN_PASSWORD\r\"
-    }
-    "assword:" {
-      send \"$LOGIN_PASSWORD\r\"
-    }
-  }
-  expect \"*\# \"
-  send \"su eauser /mnt/data/downloads/quickstart-run-wind-workbench.sh\r\"
-  set timeout 20
-  expect \"*\# \"
-  send \"exit\r\"
-  expect eof
-"
-
-sleep 10
+sleep 20
 # Automagically open the application in browser, based on OS
 if [[ $SKIP_BROWSER == 0 ]]; then
   app_url="http://$IP_ADDRESS:9098"
@@ -134,6 +141,5 @@ if [[ $SKIP_BROWSER == 0 ]]; then
        ;;
   esac
 fi
-########### custom logic ends here ###########
 
-#scp app.tar.gz config.zip scripts/quickstart-run-wind-workbench.sh root@$IP_ADDRESS:/mnt/data/downloads
+echo "Deployed Predix Edge Hello World Application to Predix Edge OS."
