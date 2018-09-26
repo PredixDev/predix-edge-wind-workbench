@@ -45,13 +45,13 @@ RUN echo @testing apk add --update --no-cache \
         py-numpy-dev \
     && rm -rf /usr/src/python ~/.cache
 
-ADD ./models/image_contents.tar.gz /
+ADD ./src/models/image_contents.tar.gz /
 
-COPY ./models /opt/microservice
+COPY ./src/models /opt/microservice
 
-COPY ./server /opt/server
+COPY ./src/server /opt/server
 
-COPY ./requirements.txt /opt
+COPY ./src/requirements.txt /opt
 
 WORKDIR /opt
 
@@ -59,7 +59,7 @@ RUN pip install -U pip setuptools \
     && pip install -r requirements.txt
 
 
-COPY ./entry_point.sh /
+COPY ./src/entry_point.sh /
 
 WORKDIR /
 RUN chmod +x entry_point.sh

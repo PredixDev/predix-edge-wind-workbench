@@ -40,26 +40,30 @@ function local_read_args() {
   fi
 }
 
-
-
 BRANCH="master"
 PRINT_USAGE=0
 SKIP_SETUP=false
+
+IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.1.0/izon2.sh"
 #ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
+REPO_NAME="wind-workbench"
+DOCKER_STACK_NAME="edge-hello-world"
 SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
-QUICKSTART_ARGS=" $SCRIPT"
+QUICKSTART_ARGS=" $SCRIPT -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
 VERSION_JSON="version.json"
 PREDIX_SCRIPTS="predix-scripts"
-REPO_NAME="wind-workbench"
 VERSION_JSON="version.json"
 APP_DIR="edge-hello-world"
 APP_NAME="Edge Starter Hello World"
+GITHUB_RAW="https://raw.githubusercontent.com/PredixDev"
+
 TOOLS="Docker, Git"
 TOOLS_SWITCHES="--docker --git"
 
+# Process switches
 local_read_args $@
-IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/$BRANCH/izon.sh"
-VERSION_JSON_URL=https://raw.githubusercontent.com/PredixDev/$REPO_NAME/$BRANCH/version.json
+
+VERSION_JSON_URL="$GITHUB_RAW/$REPO_NAME/$BRANCH/version.json"
 
 
 function check_internet() {
@@ -120,31 +124,19 @@ getCurrentRepo
 echo "pwd after copy -> $(pwd)"
 ls -lrt
 echo "quickstart_args=$QUICKSTART_ARGS"
-source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS -repo-name $REPO_NAME
+docker pull predixadoption/edge-hello-world:latest
+
+source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS
 
 ########### custom logic starts here ###########
 if ! [ -d "$logDir" ]; then
   mkdir "$logDir"
   chmod 744 "$logDir"
 fi
-touch "$logDir/quickstart.log"
-pwd
-
-docker pull predixadoption/edge-hello-world:latest
-
-#docker build --no-cache -t predixadoption/edge-hello-world:latest -f src/Dockerfile src --build-arg http_proxy --build-arg https_proxy
-
-if [[ $(docker service ls -f "name=my-edge-app_edge-hello-world" -q | wc -l) > 0 ]]; then
-  docker service rm $(docker service ls -f "name=my-edge-app_edge-hello-world" -q)
-fi
 
 docker service ls
 
-docker stack deploy --compose-file docker-compose-local.yml my-edge-app
-
-sleep 10
-
-docker service ls
+sleep 30
 
 # Automagically open the application in browser, based on OS
 if [[ $SKIP_BROWSER == 0 ]]; then
@@ -170,6 +162,10 @@ docker service ls
 echo ""
 echo ""
 docker network ls
+
+echo "" >> $SUMMARY_TEXTFILE
+echo "Edge Hello world URL: http://127.0.0.1:9098" >> $SUMMARY_TEXTFILE
+echo "" >> $SUMMARY_TEXTFILE
 
 cat $SUMMARY_TEXTFILE
 echo "......................................Done......................................"

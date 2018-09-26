@@ -1,11 +1,11 @@
 {
   "name": "Wind Workbench",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": false,
   "dependencies": {
     "local-setup": "https://github.com/PredixDev/local-setup#1.0.101",
-    "predix-scripts": "https://github.com/PredixDev/predix-scripts#1.1.158",
-    "wind-workbench": "https://github.com/PredixDev/wind-workbench#1.0.7"
+    "predix-scripts": "https://github.com/PredixDev/predix-scripts#1.1.164",
+    "wind-workbench": "https://github.com/PredixDev/wind-workbench#1.0.8"
   },
   "author": "susheelchoudhari"
 }
