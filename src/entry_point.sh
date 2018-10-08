@@ -3,7 +3,7 @@ echo "Setting time zone to '${TIME_ZONE}'"
 
 cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime
 echo "${TIME_ZONE}" >/etc/timezone
-
+echo "CDP_CONFIG : $CDP_CONFIG"
 cd /opt/microservice
 echo "Wind Turbine Model"
 exec python app_code.py &

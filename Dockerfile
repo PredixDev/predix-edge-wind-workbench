@@ -1,18 +1,20 @@
-FROM registry.gear.ge.com/predix_edge/pycdp-dev-amd64:1.0
+FROM dtr.predix.io/predix-edge/alpine-amd64
 
 ENV LANG C.UTF-8
+
+ENV CDP_VERSION 1.0.0
 
 RUN echo @testing apk add --upgrade apk-tools@edge
 
 RUN echo @testing http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
     && apk add --update --no-cache \
-        curl \
-        g++ \
-        pkgconfig \
-        freetype-dev \
-        py-numpy-dev@testing \
-        wget
-
+    curl \
+    g++ \
+    tar \
+    pkgconfig \
+    freetype-dev \
+    py-numpy-dev@testing \
+    wget
 RUN echo @testing apk add --update --no-cache \
     && apk add --update py-pip \
     && pip install --upgrade pip \
@@ -44,7 +46,30 @@ RUN echo @testing apk add --update --no-cache \
         cython-dev \
         py-numpy-dev \
     && rm -rf /usr/src/python ~/.cache
+COPY ./Packages.tar /tmp/Packages.tar
 
+RUN apk add --update --virtual .build-deps \
+    && tar -C /tmp -xvf /tmp/Packages.tar \
+  	\
+  	# Copy the current repositories file so that we can move it back later.
+  	&& cp /etc/apk/repositories /etc/apk/old-repositories \
+  	# Add the downloaded apk's to the list of repositories
+  	&& echo "/tmp/Packages/internal" >> /etc/apk/repositories \
+  	&& echo "/tmp/Packages/external" >> /etc/apk/repositories \
+  	&& echo "/tmp/Packages/edge" >> /etc/apk/repositories \
+  	\
+  	# Add the packages that we need.
+  	&& apk add --update --allow-untrusted \
+  		"pycdp=${CDP_VERSION}-r0" \
+  		"cdpt_all=${CDP_VERSION}-r0" \
+  	# Move the old repositories back
+  	&& mv /etc/apk/old-repositories /etc/apk/repositories \
+  	# Clean up the dependencies downloaded by go.
+  	&& apk del .build-deps \
+  	&& rm -rf /var/cache/apk/* \
+  	&& rm -rf /tmp/Packages*
+
+ENV CDP_EXT_LIB_PATH /usr/lib/ext_lib
 ADD ./src/models/image_contents.tar.gz /
 
 COPY ./src/models /opt/microservice

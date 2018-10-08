@@ -1,2 +1,3 @@
 # Python application required libraries
 tornado
+paho-mqtt
