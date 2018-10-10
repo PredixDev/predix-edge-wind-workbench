@@ -46,7 +46,11 @@ RUN echo @testing apk add --update --no-cache \
         cython-dev \
         py-numpy-dev \
     && rm -rf /usr/src/python ~/.cache
-COPY ./Packages.tar /tmp/Packages.tar
+
+RUN pwd \
+    && ls
+
+COPY Packages.tar /tmp/Packages.tar
 
 RUN apk add --update --virtual .build-deps \
     && tar -C /tmp -xvf /tmp/Packages.tar \
