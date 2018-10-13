@@ -1,5 +1,11 @@
 FROM dtr.predix.io/predix-edge/alpine-amd64
 
+LABEL maintainer="Predix Builder Relations"
+LABEL org="https://hub.docker.com/u/predixadoption"
+LABEL version="1.0.26"
+LABEL support="https://forum.predix.io"
+LABEL license="https://github.com/PredixDev/predix-docker-samples/blob/master/LICENSE.md"
+
 ENV LANG C.UTF-8
 
 ENV CDP_VERSION 1.0.0

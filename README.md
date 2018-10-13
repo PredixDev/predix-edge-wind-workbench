@@ -1,9 +1,11 @@
 # Wind Workbench
 A Workbench that presents a simulated wind environment that will allow folks to learn elements of the Edge
 
+
 ![Happy Day](/assets/BadScreenCaptureOfEdgeWindWorkbench.png?raw=true "Workbench")
 
 ## Installation
+
 
 ### Dependencies
 
