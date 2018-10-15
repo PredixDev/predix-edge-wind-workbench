@@ -2,7 +2,7 @@ FROM dtr.predix.io/predix-edge/alpine-amd64
 
 LABEL maintainer="Predix Builder Relations"
 LABEL org="https://hub.docker.com/u/predixadoption"
-LABEL version="1.0.29"
+LABEL version="1.0.30"
 LABEL support="https://forum.predix.io"
 LABEL license="https://github.com/PredixDev/predix-docker-samples/blob/master/LICENSE.md"
 

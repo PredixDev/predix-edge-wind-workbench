@@ -5,7 +5,7 @@ import sys
 import signal
 import types
 import time
-import MQTTClient
+#import MQTTClient
 import traceback
 #from config_helper import *
 
@@ -20,8 +20,8 @@ class CDPInterface(threading.Thread):
 
         self.daemon = True # so we can kill it with CTRL-C
         # Create the CDP object and a registry entry for a REDIS transport
-        #self.cdp = pycdp.pycdp(cdp_config, log_level=pycdp.log_warn, log_id="test")
-        self.cdp = new MQTTClient()
+        self.cdp = pycdp.pycdp(cdp_config, log_level=pycdp.log_warn, log_id="test")
+        #self.cdp = new MQTTClient()
         self.in_channels = []
 
     def publish(self, to_channel, data_obj, parse_type="json"):
