@@ -14,12 +14,12 @@ import sys
 
 class TurbineModel():
     def define_cp(self):
-        Beta = genfromtxt('pitch_x.csv', delimiter=',')
-        tsr = genfromtxt('tsr_y.csv', delimiter=',')
+        Beta = genfromtxt('pitch_x.csv')
+        tsr = genfromtxt('tsr_y.csv')
         cp = genfromtxt('cp_f.csv', delimiter=',')
-        print 'Beta (blade,pitch -5 to 6)',Beta.shape
-        print 'tsr (tip speed ratio)',tsr.shape
-        print 'cp',cp.shape
+        print('Beta (blade,pitch -5 to 6)', Beta.shape)
+        print('tsr (tip speed ratio)',tsr.shape)
+        print('cp',cp.shape)
         # This is the CP function
         self.cp_f = interpolate.interp2d(Beta, tsr, cp, kind='cubic')
 
@@ -135,22 +135,22 @@ class TurbineModel():
 
         # Find the normal component of the wind due to yaw error
         wind_speed_m_s_corr = self.wind_speed_m_s * (0.5 * (math.cos(math.radians(oa_angle)) + 1.0))
-        if debug:
-            print >>sys.stderr,"Corrected WS",wind_speed_m_s_corr
+     #   if debug:
+     #       print >>sys.stderr,"Corrected WS",wind_speed_m_s_corr
         # Find the rotor speed in RPM
         rotor_speed_rpm = self.rotor_speed(wind_speed_m_s_corr)
 
         # Get the Tip Speed Ratio
         tsr = self.tsr(wind_speed_m_s_corr,rotor_speed_rpm)
-        if debug:
-            print >>sys.stderr,"tsr",tsr
+     #   if debug:
+     #       print >>sys.stderr,"tsr",tsr
 
         # Calculate the Cp (Coeffeicient of Power ~= efficency)
         cp = self.cp_f(beta_angle_deg,tsr)
         # Clamp
         cp = cp if cp > 0.0 else np.array([0.0])
-        if debug:
-            print >>sys.stderr,"cp",cp
+     #   if debug:
+     #       print >>sys.stderr,"cp",cp
 
         # Mass flow
         pA_2 = (self.air_density_kg_mE3*self.rotor_swept_area_mE3)/2.0
@@ -167,25 +167,25 @@ if __name__ == '__main__':
     # Create the worker
     tm = TurbineModel()
     # look at power versus wind speed
-    print "Wind Speed *********************************************"
+    print("Wind Speed *********************************************")
     for ws_m in xrange(0,22):
         ws = ws_m
         tm.update_env(ws)
         p_r = tm.power_rspeed()
-        print ws,p_r
-    print "Wind Angle *********************************************"
+        print(ws, p_r)
+    print("Wind Angle *********************************************")
     for wd_ang in xrange(0,180):
         ws = 10 # m/s
         tm.update_env(ws,wd_ang)
         p_r = tm.power_rspeed()
-        print wd_ang,p_r #,p1,p2
-    print "Beta Angle *********************************************"
+        print(wd_ang,p_r) #,p1,p2
+    print("Beta Angle *********************************************")
     for beta_ang in xrange(-5,7):
         ws = 10 # m/s
         wd_ang = 0.0
         tm.update_env(ws,wd_ang)
         p_r = tm.power_rspeed(beta_ang)
-        print beta_ang,p_r #,p1,p2
+        print(beta_ang,p_r) #,p1,p2
 
 # Wind speeds range
 # Cut in speed 3 m/s

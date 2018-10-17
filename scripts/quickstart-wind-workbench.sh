@@ -5,7 +5,7 @@ trap "trap_ctrlc" 2
 
 ROOT_DIR=$(pwd)
 logDir="$ROOT_DIR/predix-scripts/log"
-
+BUILD_APP=false
 function local_read_args() {
   while (( "$#" )); do
   opt="$1"
@@ -19,6 +19,9 @@ function local_read_args() {
       BRANCH="$2"
       QUICKSTART_ARGS+=" $1 $2"
       shift
+    ;;
+    --build-app)
+      BUILD_APP=true
     ;;
     -o|--override)
       QUICKSTART_ARGS=" $SCRIPT"
@@ -121,10 +124,24 @@ ls -lrt
 #  echo "repo not present"
 getCurrentRepo
 #fi
+
 echo "pwd after copy -> $(pwd)"
-ls -lrt
 echo "quickstart_args=$QUICKSTART_ARGS"
-docker pull predixadoption/edge-hello-world:latest
+cd $PREDIX_SCRIPTS/$REPO_NAME
+dockerVersion=$(grep version Dockerfile | awk -F"=" '{print $2}' | tr -d "\"")
+echo "$dockerVersion"
+sed "s#{EDGE_HELLOWORLD_VERSION}#$dockerVersion#" docker-compose-local.yml > $(pwd)/docker-compose-local.yml.tmp
+mv $(pwd)/docker-compose-local.yml.tmp $(pwd)/docker-compose-local.yml
+
+sed "s#{EDGE_HELLOWORLD_VERSION}#$dockerVersion#" docker-compose.yml > $(pwd)/docker-compose.yml.tmp
+mv $(pwd)/docker-compose.yml.tmp $(pwd)/docker-compose.yml
+
+if [[ "$BUILD_APP" == "true" ]]; then
+  docker build  --no-cache -t "predixadoption/edge-hello-world:$dockerVersion" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
+else
+  docker pull predixadoption/edge-hello-world:$dockerVersion
+fi
+cd ../..
 
 source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS
 
@@ -135,8 +152,6 @@ if ! [ -d "$logDir" ]; then
 fi
 
 docker service ls
-
-sleep 30
 
 # Automagically open the application in browser, based on OS
 if [[ $SKIP_BROWSER == 0 ]]; then

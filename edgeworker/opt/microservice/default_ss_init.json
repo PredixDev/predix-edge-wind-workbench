@@ -1,0 +1,27 @@
+{
+    "controlms": {
+        "db_init": {}, 
+        "dependance_loops_init": {}, 
+        "extern_param_init": {}, 
+        "heartbeats_init": {
+            "fromplant.sys1.data": {
+                "rate": 10, 
+                "signal_name": "fromplant.sys1.data"
+            }, 
+            "fromplant.sys2.data": {
+                "rate": 10, 
+                "signal_name": "fromplant.sys2.data"
+            }
+        }, 
+        "special_handling_init": {}, 
+        "state_init": {
+            "sys1": {
+                "sys1_x1": [
+                    0, 
+                    0
+                ], 
+                "sys1_x2": 0
+            }
+        }
+    }
+}

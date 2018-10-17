@@ -5,7 +5,7 @@ version: '3'
 
 services:
   edge-hello-world:
-    image: "predixadoption/edge-hello-world:latest"
+    image: "predixadoption/edge-hello-world:{EDGE_HELLOWORLD_VERSION}"
     environment:
       - UPDATE_RATE_SEC=1.0
       - TURBINE_IN_CHANNEL=turbine_control

@@ -71,20 +71,20 @@ class WT_WebSocket_Handler(tornado.websocket.WebSocketHandler):
         ws_queues.remove(self.ws_que)
 
     def on_message(self, message):
-        print >>sys.stderr,"WVS: Message from_ui > %s" % message
+        print("WVS: Message from_ui > %s" % message)
         if wvw:
             msg_obj = json.loads(message)
             wvw.publish("from_ui",msg_obj)
 
     def update(self):
-        #print >>sys.stderr,"WS: Update called"
+        print("WS: Update called")
         self.count += 0.1
         try:
             dataOut = self.ws_que.pop(0)
-            #print >>sys.stderr,"WS: Update Message:",dataOut
+            print("WS: Update Message:",dataOut)
         except:
             if FAKE_INPUT:
-                print >>sys.stderr,"WVS: Update exception executed"
+                print("WVS: Update exception executed")
                 # Nothing to get in queue
                 self.yaw = 180 * math.sin(self.count) + 180
                 self.pitch = 2.5 * math.sin(self.count) + 3.5
@@ -137,43 +137,17 @@ application = tornado.web.Application([
     ('/(.*)', tornado.web.StaticFileHandler, {"path": "./public"})
     ], **settings)
 
-#@gen.coroutine
-# def old_second_loop():
-#     while True:
-#         check_for_pub_message()
-#         yield gen.sleep(1)
-#
-# def check_for_pub_message():
-#     print >>sys.stderr,"WS: check for message"
-#     message = s.get_message(True)
-#     if message:
-#         que_message(message)
-#
-# def que_message(message):
-#     if message['type'] != 'message':
-#         return
-#     print >>sys.stderr,"WS: message received"
-#     json_str = message['data']
-#     channel  = message['channel']
-#     try:
-#         json_obj = json.loads(json_str)  # need better error handling
-#     except:
-#         print >>sys.stderr, "ERROR: On channel %s json.loads %s" % (channel, str(sys.exc_info()[0]))
-#     else:
-#         #print >>sys.stderr,"WS: number of ws_queues", len(ws_queues)
-#         for queue in ws_queues:
-#             queue.append(json_obj)
-#             print >>sys.stderr,"WS: size of queue", len(queue)
-
 mainLoop = None
 
 def sigterm(signum, stack):
-    print >>sys.stderr,'Docker instructed us to terminate'
+    #print >>sys.stderr,'Docker instructed us to terminate'
+    print("Docker instructed to terminate")
     if mainLoop:
         mainLoop.stop()
 
 if __name__ == "__main__":
-    print >>sys.stderr,"Web Server......Started"
+    #print >>sys.stderr,"Web Server......Started"
+    print("Web server .... Started")
     WEB_SITE_PORT = int(os.getenv('WEB_SITE_PORT', '9005'))
 
     signal.signal(signal.SIGTERM, sigterm)
