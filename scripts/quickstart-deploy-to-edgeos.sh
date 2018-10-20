@@ -5,7 +5,8 @@ set -e
 trap "trap_ctrlc" 2
 
 ROOT_DIR=$(pwd)
-SKIP_BROWSER="0"
+logDir="$ROOT_DIR/predix-scripts/log"
+BUILD_APP=false
 function local_read_args() {
   while (( "$#" )); do
   opt="$1"
@@ -20,8 +21,10 @@ function local_read_args() {
       QUICKSTART_ARGS+=" $1 $2"
       shift
     ;;
+    --build-app)
+      BUILD_APP=true
+    ;;
     -o|--override)
-      RECREATE_TAR="1"
       QUICKSTART_ARGS=" $SCRIPT"
     ;;
     --skip-setup)
@@ -44,22 +47,27 @@ function local_read_args() {
 BRANCH="master"
 PRINT_USAGE=0
 SKIP_SETUP=false
+
+IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/master/izon2.sh"
 #ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
-SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh -deploy-edge-app"
-QUICKSTART_ARGS=" $SCRIPT"
+REPO_NAME="wind-workbench"
+DOCKER_STACK_NAME="edge-hello-world"
+SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh"
+QUICKSTART_ARGS=" $SCRIPT -create-packages -deploy-edge-app -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
 VERSION_JSON="version.json"
 PREDIX_SCRIPTS="predix-scripts"
-REPO_NAME="wind-workbench"
 VERSION_JSON="version.json"
 APP_DIR="edge-hello-world"
 APP_NAME="Edge Starter Hello World"
+GITHUB_RAW="https://raw.githubusercontent.com/PredixDev"
+
 TOOLS="Docker, Git"
 TOOLS_SWITCHES="--docker --git"
 
+# Process switches
 local_read_args $@
-IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/$BRANCH/izon.sh"
-VERSION_JSON_URL=https://raw.githubusercontent.com/PredixDev/$REPO_NAME/$BRANCH/version.json
 
+VERSION_JSON_URL="$GITHUB_RAW/$REPO_NAME/$BRANCH/version.json"
 
 function check_internet() {
   set +e
@@ -112,14 +120,10 @@ getPredixScripts
 #clone the repo itself if running from oneclick script
 pwd
 ls -lrt
-#if [[ ! -d "$PREDIX_SCRIPTS/$REPO_NAME" ]]; then
-#  echo "repo not present"
-getCurrentRepo
-#fi
+
 echo "pwd after copy -> $(pwd)"
-ls -lrt
 echo "quickstart_args=$QUICKSTART_ARGS"
-source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS -repo-name $REPO_NAME -app-name $APP_DIR
+source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS
 
 sleep 20
 # Automagically open the application in browser, based on OS
@@ -142,4 +146,10 @@ if [[ $SKIP_BROWSER == 0 ]]; then
   esac
 fi
 
-echo "Deployed Predix Edge Hello World Application to Predix Edge OS."
+echo "" >> $SUMMARY_TEXTFILE
+echo "Deployed Predix Edge Hello World Application to Predix Edge OS." >> $SUMMARY_TEXTFILE
+echo "Edge Hello world URL: http://$IP_ADDRESS:9098" >> $SUMMARY_TEXTFILE
+echo "" >> $SUMMARY_TEXTFILE
+
+cat $SUMMARY_TEXTFILE
+echo "......................................Done......................................"

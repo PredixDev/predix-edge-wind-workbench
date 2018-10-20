@@ -125,21 +125,21 @@ ls -lrt
 getCurrentRepo
 #fi
 
-echo "pwd after copy -> $(pwd)"
+#echo "pwd after copy -> $(pwd)"
 echo "quickstart_args=$QUICKSTART_ARGS"
 cd $PREDIX_SCRIPTS/$REPO_NAME
-dockerVersion=$(grep version Dockerfile | awk -F"=" '{print $2}' | tr -d "\"")
-echo "$dockerVersion"
-sed "s#{EDGE_HELLOWORLD_VERSION}#$dockerVersion#" docker-compose-local.yml > $(pwd)/docker-compose-local.yml.tmp
-mv $(pwd)/docker-compose-local.yml.tmp $(pwd)/docker-compose-local.yml
+#dockerVersion=$(grep version Dockerfile | awk -F"=" '{print $2}' | tr -d "\"")
+#echo "$dockerVersion"
+#sed "s#{EDGE_HELLOWORLD_VERSION}#$dockerVersion#" docker-compose-local.yml > $(pwd)/docker-compose-local.yml.tmp
+#mv $(pwd)/docker-compose-local.yml.tmp $(pwd)/docker-compose-local.yml
 
-sed "s#{EDGE_HELLOWORLD_VERSION}#$dockerVersion#" docker-compose.yml > $(pwd)/docker-compose.yml.tmp
-mv $(pwd)/docker-compose.yml.tmp $(pwd)/docker-compose.yml
+#sed "s#{EDGE_HELLOWORLD_VERSION}#$dockerVersion#" docker-compose.yml > $(pwd)/docker-compose.yml.tmp
+#mv $(pwd)/docker-compose.yml.tmp $(pwd)/docker-compose.yml
 
 if [[ "$BUILD_APP" == "true" ]]; then
-  docker build  --no-cache -t "predixadoption/edge-hello-world:$dockerVersion" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
-else
-  docker pull predixadoption/edge-hello-world:$dockerVersion
+  docker build  --no-cache -t "predixadoption/edge-hello-world:latest" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
+#else
+#  docker pull predixadoption/edge-hello-world:$dockerVersion
 fi
 cd ../..
 
