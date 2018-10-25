@@ -60,8 +60,8 @@ APP_DIR="edge-hello-world"
 APP_NAME="Edge Starter Hello World"
 GITHUB_RAW="https://raw.githubusercontent.com/PredixDev"
 
-TOOLS="Docker, Git"
-TOOLS_SWITCHES="--docker --git"
+TOOLS="Docker, Git, jq, yq"
+TOOLS_SWITCHES="--docker --git --jq --yq"
 
 # Process switches
 local_read_args $@
@@ -185,4 +185,7 @@ echo "Edge Hello world URL: http://127.0.0.1:9098" >> $SUMMARY_TEXTFILE
 echo "" >> $SUMMARY_TEXTFILE
 
 cat $SUMMARY_TEXTFILE
+__append_new_line_log "" "$logDir"
+__append_new_line_log "Successfully completed Edge Hello World Wind Workbench installation!" "$quickstartLogDir"
+__append_new_line_log "" "$logDir"
 echo "......................................Done......................................"

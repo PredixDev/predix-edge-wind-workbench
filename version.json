@@ -1,11 +1,11 @@
 {
   "name": "Wind Workbench",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "private": false,
   "dependencies": {
     "local-setup": "https://github.com/PredixDev/local-setup#1.0.101",
-    "predix-scripts": "https://github.com/PredixDev/predix-scripts#1.1.183",
-    "wind-workbench": "https://github.com/PredixDev/wind-workbench#1.0.35",
+    "predix-scripts": "https://github.com/PredixDev/predix-scripts#1.1.186",
+    "wind-workbench": "https://github.com/PredixDev/wind-workbench#1.0.36",
     "predix-edge-broker": "https://artifactory.predix.io/artifactory/PREDIX-EXT/predix-edge/2_1_0/os/predix-edge-broker-amd64-20180917-1.0.2.tar.gz#"
   },
   "author": "susheelchoudhari"
