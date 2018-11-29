@@ -134,4 +134,4 @@ Tested on Chrome, Safari, Firefox, IE>=8.0 (IE8.0 with excanvas).
 
 ![secretplan](https://raw.github.com/aterrien/jQuery-Knob/master/secretplan.jpg)
 
-[![Analytics](https://ga-beacon.appspot.com/UA-82773213-1/wind-workbench/readme?pixel)](https://github.com/PredixDev)
+[![Analytics](https://predix-beacon.appspot.com/UA-82773213-1/wind-workbench/readme?pixel)](https://github.com/PredixDev)

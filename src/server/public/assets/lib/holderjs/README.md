@@ -217,4 +217,4 @@ Credits
 
 Holder is a project by [Ivan Malopinsky](http://imsky.co).
 
-[![Analytics](https://ga-beacon.appspot.com/UA-82773213-1/wind-workbench/readme?pixel)](https://github.com/PredixDev)
+[![Analytics](https://predix-beacon.appspot.com/UA-82773213-1/wind-workbench/readme?pixel)](https://github.com/PredixDev)

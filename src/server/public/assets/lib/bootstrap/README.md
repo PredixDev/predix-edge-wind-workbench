@@ -126,4 +126,4 @@ For transparency into our release cycle and in striving to maintain backward com
 
 Code and documentation copyright 2011-2014 Twitter, Inc. Code released under [the MIT license](LICENSE). Docs released under [Creative Commons](docs/LICENSE).
 
-[![Analytics](https://ga-beacon.appspot.com/UA-82773213-1/wind-workbench/readme?pixel)](https://github.com/PredixDev)
+[![Analytics](https://predix-beacon.appspot.com/UA-82773213-1/wind-workbench/readme?pixel)](https://github.com/PredixDev)
