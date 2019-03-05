@@ -2,7 +2,7 @@ FROM predixadoption/edge-pycdp3:1.0.0
 
 LABEL maintainer="Predix Builder Relations"
 LABEL org="https://hub.docker.com/u/predixadoption"
-LABEL version="1.0.38"
+LABEL version="1.0.42"
 LABEL support="https://forum.predix.io"
 LABEL license="https://github.com/PredixDev/predix-docker-samples/blob/master/LICENSE.md"
 

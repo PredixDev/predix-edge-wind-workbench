@@ -49,7 +49,7 @@ SKIP_SETUP=false
 
 IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.2.0/izon2.sh"
 #ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
-REPO_NAME="wind-workbench"
+REPO_NAME="predix-edge-wind-workbench"
 DOCKER_STACK_NAME="edge-hello-world"
 SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
 QUICKSTART_ARGS=" $SCRIPT -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"

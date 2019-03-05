@@ -35,7 +35,7 @@ IF [!BRANCH!]==[] (
 
 SET IZON_BAT=https://raw.githubusercontent.com/PredixDev/izon/1.2.0/izon.bat
 SET TUTORIAL=https://www.predix.io/resources/tutorials/tutorial-details.html?tutorial_id=1475^&tag^=1719^&journey^=Predix%%20UI%%20Seed^&resources^=1475,1569,1523
-SET REPO_NAME=wind-workbench
+SET REPO_NAME=predix-edge-wind-workbench
 SET SHELL_SCRIPT_NAME=quickstart-wind-workbench.bat
 SET APP_DIR="wind-workbench-app"
 SET APP_NAME=Wind Workbench
